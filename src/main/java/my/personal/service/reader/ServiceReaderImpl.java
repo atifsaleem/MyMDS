@@ -16,6 +16,7 @@ import java.util.Map;
 
 /**
  * Created by atifsaleem on 13/7/16.
+ *
  */
 @Component
 public class ServiceReaderImpl implements ServiceReader{

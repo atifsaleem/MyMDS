@@ -2,6 +2,7 @@ package my.personal.domain;
 
 /**
  * Created by atifsaleem on 12/7/16.
+ *  * domain object for persisting instrument static data
  */
 public class InstrumentStatic {
     private String symbol;

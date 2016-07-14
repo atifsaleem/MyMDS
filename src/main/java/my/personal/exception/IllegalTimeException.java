@@ -2,6 +2,7 @@ package my.personal.exception;
 
 /**
  * Created by atifsaleem on 12/7/16.
+ * Application level exception
  */
 public class IllegalTimeException extends RuntimeException {
     private int seconds;

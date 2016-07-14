@@ -7,6 +7,7 @@ import java.util.Map;
 
 /**
  * Created by atifsaleem on 12/7/16.
+ * dao for instrument static. Instrument static data contains the ticker symbol and persistence interval for the symbol (e.g: a tuple would be GOOG-3, since the GOOG symbol is to be persisted every 3 secs)
  */
 public interface InstrumentsDao {
     int getInstrumentsCount();

@@ -1,6 +1,10 @@
 Price processing service
 ========================
 
+Assumptions
+-----------
+
+
 Pre-requisites
 --------------
 

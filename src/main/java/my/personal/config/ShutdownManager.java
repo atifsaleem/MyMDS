@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Created by atifsaleem on 14/7/16.
+ * This component helps shutdown the application after the pre defined execution time
  */
 @Component
 public class ShutdownManager{

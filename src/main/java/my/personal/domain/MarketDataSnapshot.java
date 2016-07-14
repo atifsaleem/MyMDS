@@ -3,7 +3,9 @@ package my.personal.domain;
 import java.util.HashMap;
 
 /**
- * Created by atifsaleem on 12/7/16.
+ * Created by atifsaleem on 12/7/16
+ * domain object for holding market data
+ * application is single threaded, hashmap will suffice. we would use a concurrent hash map were it a multi threaded app.
  */
 public class MarketDataSnapshot {
     private int second;

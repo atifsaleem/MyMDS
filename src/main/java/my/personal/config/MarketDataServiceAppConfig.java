@@ -21,6 +21,8 @@ import java.util.logging.Logger;
 
 /**
  * Created by atifsaleem on 12/7/16.
+ *
+ * The method for running the application lives here. The scheduled method polls the market data source based on the polling interval defined in the properties
  */
 @Configuration
 @ComponentScan({ "my.personal.*" })
@@ -28,6 +30,14 @@ import java.util.logging.Logger;
 @EnableScheduling
 public class MarketDataServiceAppConfig {
     private static final Logger LOGGER = Logger.getLogger(MarketDataServiceAppConfig.class.getName());
+    public static final int RETURN_CODE = 0;
+
+    @Value("${ddl.path}")
+    private String ddlPath;
+
+    public void setDdlPath(String ddlPath) {
+        this.ddlPath = ddlPath;
+    }
 
     @Bean
     public JdbcTemplate getJdbcTemplate() {
@@ -35,11 +45,12 @@ public class MarketDataServiceAppConfig {
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
         EmbeddedDatabase db = builder
                 .setType(EmbeddedDatabaseType.HSQL)
-                .addScript("db/sql/create-db.sql")
+                .addScript(ddlPath)
                 .build();
 
         return new JdbcTemplate(db);
     }
+
     @Autowired
     ServiceWriter serviceWriter;
     @Autowired
@@ -50,19 +61,20 @@ public class MarketDataServiceAppConfig {
     @Autowired
     ShutdownManager shutdownManager;
 
+
     @Value("${execution.time}")
     int maxExecutionTime;
 
     int currentTime=-1;
 
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRateString = "${polling.interval}")
     public void run() {
         currentTime++;
         if (currentTime>maxExecutionTime)
-        {   LOGGER.info("Process ended, publishing report");
+        {   LOGGER.info("Price Process ended, publishing report");
             serviceReporter.publishAveragePriceOverLastTenSecondsReport();
             serviceReporter.publishSecondHighestPersistedReport();
-            shutdownManager.initiateShutdown(0);
+            shutdownManager.initiateShutdown(RETURN_CODE);
         }
         else {
             serviceWriter.runWriter();

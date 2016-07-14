@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by atifsaleem on 13/7/16.
+ * jdbc implementation of dao
  */
 @Repository
 public class jdbcPriceDataDestinationDao implements PriceDataDestinationDao{

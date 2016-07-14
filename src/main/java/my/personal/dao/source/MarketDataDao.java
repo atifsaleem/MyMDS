@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 
 /**
  * Created by atifsaleem on 12/7/16.
+ *  * dao for market data. takes in a second, and returns market data for all instruments present in the instrument static
  */
 public interface MarketDataDao {
     MarketDataSnapshot getMarketData(int second) throws IOException;

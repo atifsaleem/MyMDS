@@ -2,6 +2,7 @@ package my.personal.domain;
 
 /**
  * Created by atifsaleem on 13/7/16.
+ * domain object for persisting price data for an instrument into db
  */
 public class InstrumentPrice {
     private String symbol;

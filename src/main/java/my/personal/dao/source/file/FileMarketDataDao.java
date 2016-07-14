@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by atifsaleem on 12/7/16.
+ * file based implementation of market data dao
  */
 @Component
 public class FileMarketDataDao implements MarketDataDao {
