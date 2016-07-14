@@ -4,12 +4,22 @@ Price processing service
 Assumptions
 -----------
 
+- Service is not required to be multi-threaded
+- The output need not be like for like in formatting to the example output.
 
 Pre-requisites
 --------------
 
 - JDK 1.7
 - Maven 2 or above
+
+Dependencies
+------------
+
+- Spring
+- HSQLDB
+- Junit
+- Maven shade plugin (to create uber jar with all dependencies included)
 
 To run unit tests
 -----------------
