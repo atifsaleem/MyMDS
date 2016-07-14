@@ -1,0 +1,4 @@
+BT.L:5
+VOD.L:5
+BP.L:3
+GOOG:3

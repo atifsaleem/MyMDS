@@ -1,0 +1,6 @@
+# Intellij ignore
+
+# User-specific stuff:
+.idea/
+*.iml
+.idea/vcs.xml
