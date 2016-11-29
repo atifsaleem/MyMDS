@@ -17,6 +17,7 @@ import my.personal.service.writer.ServiceWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -70,6 +71,11 @@ public class TestMarketDataServiceAppConfig {
     @Bean
     public ServiceReporter getServiceReporter() {
         return new ServiceReporterImpl();
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 
 }

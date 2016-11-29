@@ -15,6 +15,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -46,10 +48,11 @@ public class ServiceWriterImplTest {
     }
 
     @Test
-    public void testWritingToServiceAtTheBeginningOfTime() throws IOException {
+    public void testWritingToServiceAtTheBeginningOfTime() throws IOException, InterruptedException {
         int second = 0;
-        serviceWriter.writePriceToService(second);
-        MarketDataSnapshot marketData = priceProcessingService.getPrices();
+        ExecutorService ex = Executors.newSingleThreadExecutor();
+        ex.submit(serviceWriter);
+        MarketDataSnapshot marketData = priceProcessingService.getQueue().take();
         HashMap<String, Double> priceMap = marketData.getPriceMap();
         assertEquals(100.0, priceMap.get("BT.L"), 0.01);
         assertEquals(85.0, priceMap.get("VOD.L"), 0.01);

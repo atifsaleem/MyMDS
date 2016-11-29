@@ -23,7 +23,10 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.*;
 
+import static com.sun.javaws.JnlpxArgs.verify;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -56,42 +59,41 @@ public class ServiceReaderImplTest {
     }
 
     @Test
-    public void testReaderFromServiceAtTheBeginningOfTime() throws IOException {
+    public void testReaderFromServiceAtTheBeginningOfTime() throws IOException, InterruptedException {
         int second = 0;
-        serviceWriter.writePriceToService(second);
-        MarketDataSnapshot marketData = priceProcessingService.getPrices();
-        serviceReader.readFromService(second);
+        final MarketDataSnapshot marketDataSnapshot = new MarketDataSnapshot();
+        HashMap<String, Double> priceMap = new HashMap<String, Double>();
+        priceMap.put("BT.L",100.0);
+        priceMap.put("VOD.L",200.0);
+        priceMap.put("BP.L",200.0);
+        priceMap.put("GOOG",200.0);
+        marketDataSnapshot.setPriceMap(priceMap);
+        ExecutorService ex = Executors.newFixedThreadPool(2);
+        final Future handler2 = ex.submit(new Runnable(){
+            public void run(){
+                try {
+                    priceProcessingService.getQueue().put(marketDataSnapshot);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        final Future handler1 = ex.submit(serviceReader);
+        try {
+            System.out.println("Started..");
+            handler1.get(1, TimeUnit.SECONDS);
+            System.out.println("Finished!");
+        } catch (TimeoutException e) {
+            handler1.cancel(true);
+            ex.shutdownNow();
+            System.out.println("Terminated!");
+            int rows = priceDataDestinationDao.executeQueryForCount("select count(*) from priceData");
+            assertEquals(4,rows);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
-
-    @Test
-    public void testReaderFromServiceAtThreeSeconds() throws IOException {
-        int second = 3;
-        serviceWriter.writePriceToService(second);
-        MarketDataSnapshot marketData = priceProcessingService.getPrices();
-        serviceReader.readFromService(second);
-    }
-    @Test
-    public void testReaderFromServiceAtFiveSeconds() throws IOException {
-        int second = 5;
-        serviceWriter.writePriceToService(second);
-        MarketDataSnapshot marketData = priceProcessingService.getPrices();
-        serviceReader.readFromService(second);
-    }
-    @Test
-    public void testReaderFromServiceAtSixSeconds() throws IOException {
-        int second = 6;
-        serviceWriter.writePriceToService(second);
-        MarketDataSnapshot marketData = priceProcessingService.getPrices();
-        serviceReader.readFromService(second);
-    }
-
-    @Test
-    public void testReaderFromServiceAtTenSeconds() throws IOException {
-        int second = 10;
-        serviceWriter.writePriceToService(second);
-        MarketDataSnapshot marketData = priceProcessingService.getPrices();
-        serviceReader.readFromService(second);
-    }
-
 
 }

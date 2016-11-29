@@ -60,9 +60,8 @@ public class jdbcPriceDataDestinationDao implements PriceDataDestinationDao{
         return true;
     }
 
-    public boolean executeQuery(String sql) {
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
-        return true;
+    public int executeQueryForCount(String sql) {
+        return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 
     public List<Map<String,Object>> getSecondHighestPricePerTicker() {

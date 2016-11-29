@@ -7,8 +7,13 @@ import my.personal.domain.InstrumentStatic;
 import my.personal.domain.MarketDataSnapshot;
 import my.personal.service.PriceProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +24,15 @@ import java.util.Map;
  *
  */
 @Component
+@PropertySource("classpath:common.properties")
 public class ServiceReaderImpl implements ServiceReader{
     private static boolean initalized = false;
     private int second;
     @Autowired
     private PriceProcessingService priceProcessingService;
+
+    @Value("${polling.interval}")
+    private int interval;
 
     @Autowired
      private InstrumentsDao instrumentsDao;
@@ -40,17 +49,24 @@ public class ServiceReaderImpl implements ServiceReader{
     public void setInstrumentStaticList(List<InstrumentStatic> instrumentStaticList) {
         this.instrumentStaticList = instrumentStaticList;
     }
-    public void runReader() {
-        if (!initalized)
-        {
-            this.setInstrumentStaticList(new ArrayList<InstrumentStatic>(instrumentsDao.getInstrumentsList().values()));
-            initalized = true;
+    public void run() {
+        while(true) {
+            if (!initalized) {
+                this.setInstrumentStaticList(new ArrayList<InstrumentStatic>(instrumentsDao.getInstrumentsList().values()));
+                initalized = true;
+            }
+            try {
+                readFromService(second);
+                second++;
+                Thread.sleep(interval);
+            } catch (InterruptedException e) {
+                break;
+            }
         }
-        readFromService(second);
-        second++;
+
     }
-    public void readFromService(int second) {
-        marketData = priceProcessingService.getPrices();
+    public void readFromService(int second) throws InterruptedException{
+            marketData = priceProcessingService.getQueue().take();
         Map<String, Double> priceMap = marketData.getPriceMap();
         List<InstrumentStatic> instrumentsToBePersisted = getInstrumentsToBePersistedAtThisSecond(second);
         if (instrumentsToBePersisted!=null) {
@@ -81,4 +97,9 @@ public class ServiceReaderImpl implements ServiceReader{
     public boolean persistToDb(List<InstrumentPrice> instrumentPrices) {
         return priceDataDestinationDao.persistPriceData(instrumentPrices);
     }
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+
 }

@@ -43,6 +43,11 @@ public class FileInstrumentsDao implements InstrumentsDao {
     }
 
     public Map<String, InstrumentStatic> getInstrumentsList() {
+        if (!initalized)
+        {
+            this.loadInstruments();
+            initalized=true;
+        }
         return instrumentList;
     }
 

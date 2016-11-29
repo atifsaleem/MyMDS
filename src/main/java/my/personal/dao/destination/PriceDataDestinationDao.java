@@ -1,6 +1,7 @@
 package my.personal.dao.destination;
 
 import my.personal.domain.InstrumentPrice;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.Map;
  */
 public interface PriceDataDestinationDao {
     boolean persistPriceData(List<InstrumentPrice> prices);
-    boolean executeQuery(String sql);
+    int executeQueryForCount(String sql);
     List getSecondHighestPricePerTicker();
     List getAveragePriceOverLastTenSeconds();
 }

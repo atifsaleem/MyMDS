@@ -4,6 +4,7 @@ import my.personal.config.TestMarketDataServiceAppConfig;
 import my.personal.dao.destination.PriceDataDestinationDao;
 import my.personal.dao.source.InstrumentsDao;
 import my.personal.dao.source.MarketDataDao;
+import my.personal.domain.InstrumentPrice;
 import my.personal.domain.MarketDataSnapshot;
 import my.personal.service.PriceProcessingService;
 import my.personal.service.reader.ServiceReader;
@@ -17,7 +18,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -42,16 +45,15 @@ public class ServiceReporterImplTest {
     ServiceReader serviceReader;
     @Before
     public void initialize() {
-        if (!instrumentStaticInitializationComplete) {
-            instrumentDataDao.loadInstruments();
-            instrumentStaticInitializationComplete = true;
-            for (int i=0;i<30;i++)
-            {
-                serviceWriter.runWriter();
-                serviceReader.runReader();
-            }
-
+        for (int i = 20; i<=30 ; i++)
+        {   List<InstrumentPrice> instrumentPriceList = new ArrayList<InstrumentPrice>();
+            instrumentPriceList.add(new InstrumentPrice("BT.L",100.0+i,i));
+            instrumentPriceList.add(new InstrumentPrice("BP.L",100+i,i));
+            instrumentPriceList.add(new InstrumentPrice("VOD.L",100+i,i));
+            instrumentPriceList.add(new InstrumentPrice("GOOG",100+i,i));
+            priceDataDestinationDao.persistPriceData(instrumentPriceList);
         }
+
     }
 
     @Test

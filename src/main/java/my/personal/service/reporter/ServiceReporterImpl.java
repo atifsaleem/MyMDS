@@ -21,6 +21,10 @@ public class ServiceReporterImpl implements ServiceReporter {
     @Autowired
     private PriceDataDestinationDao priceDataDestinationDao;
 
+    public void run() {
+        this.publishAveragePriceOverLastTenSecondsReport();
+        this.publishSecondHighestPersistedReport();
+    }
     public void publishSecondHighestPersistedReport() {
         LOGGER.info("Publishing second highest price per ticker");
         List<Map<String,Object>> rows = priceDataDestinationDao.getSecondHighestPricePerTicker();
